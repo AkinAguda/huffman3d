@@ -27,7 +27,7 @@ pub fn greet(n: &str) {
 pub fn gen_map_json(v: &str) -> String {
     let mut stru = get_unique_chars(&v);
     let sorted = sort_nodes(&mut stru);
-    let huffman = build_huffman(sorted);
+    let huffman = build_huffman(sorted).0;
     println!("{:?}", huffman);
     let de_ref = *huffman;
     serde_json::to_string(&de_ref).unwrap()
@@ -35,12 +35,15 @@ pub fn gen_map_json(v: &str) -> String {
     // get_map(&huffman, &mut map, "".to_string());
     // map
 }
+#[wasm_bindgen]
 pub fn get_huffman(v: &str) -> String {
     let mut stru = get_unique_chars(&v);
     let sorted = sort_nodes(&mut stru);
-    let huffman = build_huffman(sorted);
+    let huffman = build_huffman(sorted).0;
     let mut map: HashMap<char, String> = HashMap::new();
     get_map(&huffman, &mut map, "".to_string());
+    println!("{:?}", map);
     let encoded = encode(&v, &map);
-    encoded
+    // encoded
+    serde_json::to_string(&map).unwrap()
 }

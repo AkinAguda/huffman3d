@@ -29,7 +29,7 @@ fn sort_nodes_works() {
     assert_eq!(sort_nodes(&mut test_vector)[0].get_freq(), 15);
     assert_eq!(sort_nodes(&mut test_vector)[3].get_freq(), 2);
 }
-pub fn build_huffman(list: &mut Vec<Box<Node>>) -> Box<Node> {
+pub fn build_huffman(list: &mut Vec<Box<Node>>) -> (Box<Node>, i64) {
     if list.len() > 1 {
         let sum = list[list.len() - 1].get_freq() + list[list.len() - 2].get_freq();
         let mut new_root = Node::new(ValueTypes::Number(sum), Some(sum));
@@ -41,7 +41,7 @@ pub fn build_huffman(list: &mut Vec<Box<Node>>) -> Box<Node> {
         let list = sort_nodes(list);
         build_huffman(list)
     } else {
-        list.pop().unwrap()
+        (list.pop().unwrap(), 5)
     }
 }
 use std::collections::HashMap;

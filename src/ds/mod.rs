@@ -1,6 +1,3 @@
-// extern crate serde;
-// extern crate serde_json;
-// #[macro_use] extern crate serde_derive;
 use serde_derive::Serialize;
 
 #[derive(Serialize, Debug, Clone, Copy)]
