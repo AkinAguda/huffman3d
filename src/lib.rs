@@ -1,7 +1,7 @@
 mod ds;
 mod functions;
 mod utils;
-use ds::Node;
+use ds::{AddAction, Node, NodeType};
 use functions::{build_huffman, decode, encode, get_map, get_unique_chars, sort_nodes};
 use std::collections::HashMap;
 
@@ -27,23 +27,31 @@ pub fn greet(n: &str) {
 pub fn gen_map_json(v: &str) -> String {
     let mut stru = get_unique_chars(&v);
     let sorted = sort_nodes(&mut stru);
-    let huffman = build_huffman(sorted).0;
-    println!("{:?}", huffman);
-    let de_ref = *huffman;
-    serde_json::to_string(&de_ref).unwrap()
+    let huffman = build_huffman(sorted, None).1;
+    // println!("{:?}", huffman);
+    // let de_ref = *huffman;
+    serde_json::to_string(&huffman).unwrap()
+    // serde_json::to_string(&de_ref).unwrap()
     // let mut map: HashMap<char, String> = HashMap::new();
     // get_map(&huffman, &mut map, "".to_string());
     // map
 }
+
+#[wasm_bindgen]
+pub fn get_u(v: &str) -> String {
+    serde_json::to_string(&get_unique_chars(&v)).unwrap()
+}
+
 #[wasm_bindgen]
 pub fn get_huffman(v: &str) -> String {
     let mut stru = get_unique_chars(&v);
     let sorted = sort_nodes(&mut stru);
-    let huffman = build_huffman(sorted).0;
+    let (huffman, o) = build_huffman(sorted, None);
     let mut map: HashMap<char, String> = HashMap::new();
     get_map(&huffman, &mut map, "".to_string());
     println!("{:?}", map);
     let encoded = encode(&v, &map);
     // encoded
-    serde_json::to_string(&map).unwrap()
+    serde_json::to_string(&o).unwrap()
+    // String::from("hello")
 }

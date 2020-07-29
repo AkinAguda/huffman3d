@@ -1,5 +1,5 @@
 use super::ds;
-use ds::{Node, ValueTypes};
+use ds::{ActionTypes, AddAction, FrequencyType, Node, NodeType, ValueTypes};
 pub fn get_unique_chars(text: &str) -> Vec<Box<Node>> {
     let mut map: HashMap<char, usize> = HashMap::new();
     let mut nodes: Vec<Box<Node>> = vec![];
@@ -29,19 +29,49 @@ fn sort_nodes_works() {
     assert_eq!(sort_nodes(&mut test_vector)[0].get_freq(), 15);
     assert_eq!(sort_nodes(&mut test_vector)[3].get_freq(), 2);
 }
-pub fn build_huffman(list: &mut Vec<Box<Node>>) -> (Box<Node>, i64) {
+fn get_node_type(node: &Node) -> NodeType {
+    match node.value {
+        Number => NodeType::Number,
+        Character => NodeType::Character,
+        _ => NodeType::Nil,
+    }
+}
+
+pub fn build_huffman(
+    list: &mut Vec<Box<Node>>,
+    sequence: Option<Vec<AddAction>>,
+) -> (Box<Node>, Vec<AddAction>) {
     if list.len() > 1 {
-        let sum = list[list.len() - 1].get_freq() + list[list.len() - 2].get_freq();
+        let sum = &list[list.len() - 1].get_freq() + &list[list.len() - 2].get_freq();
         let mut new_root = Node::new(ValueTypes::Number(sum), Some(sum));
+
         let a = list.pop();
         let b = list.pop();
         new_root.right = a;
         new_root.left = b;
         list.push(Box::new(new_root));
+        let right_node_type = get_node_type(list.last().unwrap().right.as_ref().unwrap());
+        let left_node_type = get_node_type(list.last().unwrap().left.as_ref().unwrap());
+        let instance = FrequencyType(
+            list.last().unwrap().right.as_ref().unwrap().get_freq(),
+            list.last().unwrap().left.as_ref().unwrap().get_freq(),
+        );
         let list = sort_nodes(list);
-        build_huffman(list)
+        if sequence.is_some() {
+            let mut sequence = sequence.unwrap();
+            sequence.push(AddAction::new(
+                ActionTypes::add,
+                right_node_type,
+                left_node_type,
+                instance,
+                sum,
+            ));
+            return build_huffman(list, Some(sequence));
+        } else {
+            return build_huffman(list, Some(vec![]));
+        };
     } else {
-        (list.pop().unwrap(), 5)
+        (list.pop().unwrap(), sequence.unwrap())
     }
 }
 use std::collections::HashMap;

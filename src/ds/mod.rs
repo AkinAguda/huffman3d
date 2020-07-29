@@ -1,4 +1,62 @@
 use serde_derive::Serialize;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub struct CharTupleStruct(pub char, pub char);
+
+#[wasm_bindgen]
+pub struct NumTupleStruct(pub i64, pub i64);
+
+#[wasm_bindgen]
+pub struct CharAndNumTuple(CharTupleStruct, NumTupleStruct);
+
+#[wasm_bindgen]
+#[derive(Serialize, Debug, Clone, Copy)]
+pub struct FrequencyType(pub i64, pub i64);
+
+#[wasm_bindgen]
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum NodeType {
+    Character,
+    Number,
+    Nil,
+}
+
+#[wasm_bindgen]
+#[derive(Serialize, Debug, Clone, Copy)]
+pub enum ActionTypes {
+    add,
+    delete,
+}
+
+#[wasm_bindgen]
+#[derive(Serialize, Debug, Clone, Copy)]
+pub struct AddAction {
+    pub action_type: ActionTypes,
+    pub left_node: NodeType,
+    pub right_node: NodeType,
+    pub frequencies: FrequencyType,
+    pub new_node_freq: i64,
+}
+
+#[wasm_bindgen]
+impl AddAction {
+    pub fn new(
+        action_type: ActionTypes,
+        left_node: NodeType,
+        right_node: NodeType,
+        frequencies: FrequencyType,
+        new_node_freq: i64,
+    ) -> AddAction {
+        AddAction {
+            action_type,
+            left_node,
+            right_node,
+            frequencies,
+            new_node_freq,
+        }
+    }
+}
 
 #[derive(Serialize, Debug, Clone, Copy)]
 pub enum ValueTypes {
